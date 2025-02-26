@@ -107,7 +107,7 @@ async function getLatestBundleVersion() {
 		client_version = '11.0.4';
 	}
 	console.log(client_version);
-	response = await fetch(`https://stt-cdn-services.s3.amazonaws.com/production/${CLIENT_PLATFORM_FOLDER}_${client_version}.txt`);
+	response = await fetch(`https://stt-cdn-services.s3.amazonaws.com/liveclone/${CLIENT_PLATFORM_FOLDER}_${client_version}.txt`);
 	if (!response.ok) {
 		throw Error('Failed to fetch bundle version');
 	}
@@ -196,7 +196,12 @@ async function main() {
 
 	console.log(`Running on ${new Date().toString()}...`);
 
-	const { client_version, bundle_version } = await getLatestBundleVersion();
+	let { client_version, bundle_version } = await getLatestBundleVersion();
+	let ib = process.argv.indexOf("--bundle");
+	if (ib != -1) {
+		console.log(`Force bundle ${process.argv[ib+1]}`);
+		bundle_version = process.argv[ib+1];
+	}
 
 	let latestVersion = 'NONE';
 	if (fs.existsSync(path.join(OUT_PATH, '/data/latestVersion.txt'))) {
